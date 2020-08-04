@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>light</title>
+        <link rel="stylesheet" href="../style/index.css" />
+    </head>
+    <body>
+        <div class="container">
+            <canvas id="canvas" width="768" height="768"></canvas>
+            <p>
+                <button id="IncreaseR">Increase R</button>
+                <button id="DecreaseR">Decrease R</button>
+            </p>
+            <p>
+                <button id="IncreaseT">Increase theta</button>
+                <button id="DecreaseT">Decrease theta</button>
+                <button id="IncreaseP">Increase phi</button>
+                <button id="DecreaseP">Decrease phi</button>
+            </p>
+            <p>
+                <button id="IncreaseSubdivisions">Increase Subdivisions</button>
+                <button id="DecreaseSubdivisions">Decrease Subdivisions</button>
+            </p>
+        </div>
+    </body>
+    <script id="vertex-shader" type="x-shader/x-vertex">
+        attribute vec4 vPosition;
+        attribute vec4 vNormal;
+        varying vec3 N, L, E;
+        uniform mat4 modelViewMatrix;
+        uniform mat4 projectionMatrix;
+        uniform vec4 lightPosition;
+        uniform mat3 normalMatrix;
+
+        void main()
+        {
+            vec3 light;
+            vec3 pos = (modelViewMatrix * vPosition).xyz;
+            if(lightPosition.z == 0.0)  L = normalize(lightPosition.xyz);
+            else  L = normalize(lightPosition).xyz - pos;
+
+            E =  -normalize(pos);
+            N = normalize( normalMatrix*vNormal.xyz);
+            gl_Position = projectionMatrix * modelViewMatrix * vPosition;
+
+        }
+    </script>
+    <script id="fragment-shader" type="x-shader/x-fragment">
+        precision mediump float;
+
+        uniform vec4 ambientProduct;
+        uniform vec4 diffuseProduct;
+        uniform vec4 specularProduct;
+        uniform float shininess;
+        varying vec3 N, L, E;
+
+        void main()
+        {
+            vec4 fColor;
+
+            vec3 H = normalize( L + E );
+            vec4 ambient = ambientProduct;
+
+            float Kd = max( dot(L, N), 0.0 );
+            vec4  diffuse = Kd*diffuseProduct;
+
+            float Ks = pow( max(dot(N, H), 0.0), shininess );
+            vec4  specular = Ks * specularProduct;
+
+            if( dot(L, N) < 0.0 ) specular = vec4(0.0, 0.0, 0.0, 1.0);
+
+            fColor = ambient + diffuse +specular;
+            fColor.a = 1.0;
+
+            gl_FragColor = fColor;
+        }
+    </script>
+    <script src="../common/webgl-utils.js"></script>
+    <script src="../common/initShaders.js"></script>
+    <script src="../common/MV.js"></script>
+    <script src="../common/util.js"></script>
+    <script src="index.js"></script>
+</html>

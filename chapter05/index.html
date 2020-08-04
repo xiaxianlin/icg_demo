@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>cube</title>
+        <link rel="stylesheet" href="../style/index.css" />
+    </head>
+    <body>
+        <div class="container">
+            <canvas id="canvas" width="768" height="768"></canvas>
+            <div>depth .05<input id="depthSlider" type="range" min=".05" max="3" step="0.1" value="2" />3</div>
+            <div>radius 0.05<input id="radiusSlider" type="range" min="0.05" max="2" step="0.1" value="1" />2</div>
+            <div>theta -90<input id="thetaSlider" type="range" min="-90" max="90" step="5" value="0" />90</div>
+            <div>phi -90<input id="phiSlider" type="range" min="-90" max="90" step="5" value="0" />90</div>
+            <div>width 0<input id="widthSlider" type="range" min="0" max="20" step="1" value="10" />20</div>
+            <div>height 0<input id="heightSlider" type="range" min="0" max="20" step="1" value="10" />20</div>
+        </div>
+    </body>
+    <script id="vertex-shader" type="x-shader/x-vertex">
+        attribute vec4 vPosition;
+        attribute vec4 vColor;
+        varying vec4 fColor;
+
+        uniform mat4 modelViewMatrix;
+        uniform mat4 projectionMatrix;
+
+        void main(){
+            fColor = vColor;
+            gl_Position = projectionMatrix * modelViewMatrix * vPosition;
+        }
+    </script>
+    <script id="fragment-shader" type="x-shader/x-fragment">
+        precision mediump float;
+        varying vec4 fColor;
+
+        void main(){
+            gl_FragColor = fColor;
+        }
+    </script>
+    <script src="../common/webgl-utils.js"></script>
+    <script src="../common/initShaders.js"></script>
+    <script src="../common/MV.js"></script>
+    <script src="../common/util.js"></script>
+    <script src="index.js"></script>
+</html>
