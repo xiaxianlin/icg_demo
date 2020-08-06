@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>cube</title>
+        <link rel="stylesheet" href="../style/index.css" />
+    </head>
+    <body>
+        <div class="container">
+            <canvas id="canvas" width="768" height="768"></canvas>
+            <div>
+                <button id="RotateX">Rotate X</button>
+                <button id="RotateY">Rotate Y</button>
+                <button id="RotateZ">Rotate Z</button>
+            </div>
+        </div>
+    </body>
+    <script id="vertex-shader" type="x-shader/x-vertex">
+
+        attribute vec4 vPosition;
+        attribute vec4 vNormal;
+
+        varying vec3 R;
+
+        uniform mat4 modelViewMatrix;
+        uniform mat4 projectViewMatrix;
+        uniform mat3 normalMatrix;
+
+        void main(){
+            gl_Position = projectViewMatrix * modelViewMatrix * vPosition;
+
+            vec3 eyePos  = (modelViewMatrix * vPosition).xyz;
+
+            vec3 N = normalize(normalMatrix * vNormal.xyz);
+
+            R = reflect(eyePos, N);
+        }
+    </script>
+    <script id="fragment-shader" type="x-shader/x-fragment">
+        precision mediump float;
+
+        varying vec3 R;
+
+        uniform samplerCube texMap;
+
+        void main(){
+            vec4 texColor = textureCube(texMap, R);
+            gl_FragColor =  texColor;
+        }
+    </script>
+    <script src="../common/webgl-utils.js"></script>
+    <script src="../common/initShaders.js"></script>
+    <script src="../common/MV.js"></script>
+    <script src="../common/util.js"></script>
+    <script src="cube3.js"></script>
+</html>
