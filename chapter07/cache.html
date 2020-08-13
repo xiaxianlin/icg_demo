@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>cache</title>
+        <link rel="stylesheet" href="../style/index.css" />
+    </head>
+    <body>
+        <div class="container">
+            <canvas id="canvas" width="768" height="768"></canvas>
+        </div>
+    </body>
+    <script id="vertex-shader1" type="x-shader/x-vertex">
+        attribute vec4 vPosition;
+
+        void main(){
+            gl_Position = vPosition;
+        }
+    </script>
+    <script id="vertex-shader2" type="x-shader/x-vertex">
+        attribute vec4 vPosition;
+        attribute vec2 vTexCoord;
+
+        varying vec2 fTexCoord;
+
+        void main(){
+            fTexCoord = vTexCoord;
+            gl_Position = vPosition;
+        }
+    </script>
+    <script id="fragment-shader1" type="x-shader/x-fragment">
+        precision mediump float;
+
+        void main(){
+            gl_FragColor = vec4(1.0, 0.0, 0.0, 1.0);
+        }
+    </script>
+    <script id="fragment-shader2" type="x-shader/x-fragment">
+        precision mediump float;
+
+        varying vec2 fTexCoord;
+
+        uniform sampler2D texture;
+
+        void main(){
+            gl_FragColor = texture2D(texture, fTexCoord);
+        }
+    </script>
+    <script src="../common/webgl-utils.js"></script>
+    <script src="../common/initShaders.js"></script>
+    <script src="../common/MV.js"></script>
+    <script src="cache.js"></script>
+</html>

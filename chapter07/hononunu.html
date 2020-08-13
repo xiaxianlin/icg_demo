@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>hononunu</title>
+        <link rel="stylesheet" href="../style/index.css" />
+    </head>
+    <body>
+        <div class="container">
+            <canvas id="canvas" width="768" height="768"></canvas>
+            <div>
+                <button id="Button2">Increase theta</button>
+                <button id="Button3">Decrease theta</button>
+                <button id="Button4">Increase phi</button>
+                <button id="Button5">Decrease phi</button>
+            </div>
+        </div>
+    </body>
+    <script id="vertex-shader" type="x-shader/x-vertex">
+        varying vec3 L;
+        varying vec3 V;
+        varying vec2 fTexCoord;
+
+        attribute vec2 vTexCoord;
+        attribute vec4 vPosition;
+
+        uniform vec4 normal;
+        uniform vec4 lightPosition;
+        uniform mat4 modelViewMatrix;
+        uniform mat4 projectionMatrix;
+        uniform mat3 normalMatrix;
+        uniform vec3 objTangent;
+
+        void main(){
+            gl_Position = projectionMatrix * modelViewMatrix * vPosition;
+
+            fTexCoord = vTexCoord;
+
+            vec3 eyePosition = (modelViewMatrix * vPosition).xyz;
+            vec3 eyeLightPos = (modelViewMatrix * lightPosition).xyz;
+
+            vec3 N = normalize(normalMatrix * normal.xyz);
+            vec3 T = normalize(normalMatrix * objTangent);
+            vec3 B = cross(N, T);
+
+            L.x = dot(T, eyeLightPos - eyePosition);
+            L.y = dot(B, eyeLightPos - eyePosition);
+            L.z = dot(N, eyeLightPos - eyePosition);
+
+            L = normalize(L);
+
+            V.x = dot(T, -eyePosition);
+            V.z = dot(B, -eyePosition);
+            V.y = dot(N, -eyePosition);
+
+            V = normalize(V);
+        }
+    </script>
+    <script id="fragment-shader" type="x-shader/x-fragment">
+        precision mediump float;
+
+        varying vec3 L;
+        varying vec3 V;
+        varying vec2 fTexCoord;
+
+        uniform sampler2D texMap;
+        uniform vec4 diffuseProduct;
+
+        void main(){
+            vec4 N = texture2D(texMap, fTexCoord);
+            vec3 NN = normalize(2.0 * N.xyz - 1.0);
+            vec3 LL = normalize(L);
+            float kd = max(dot(NN, LL), 0.0);
+            vec4 ambient = vec4(0.2, 0.2, 0.2, 0.0);
+            gl_FragColor = ambient + vec4(kd * diffuseProduct.xyz, 1.0);
+        }
+    </script>
+    <script src="../common/webgl-utils.js"></script>
+    <script src="../common/initShaders.js"></script>
+    <script src="../common/MV.js"></script>
+    <script src="honolulu256.js"></script>
+    <script src="hononunu.js"></script>
+</html>

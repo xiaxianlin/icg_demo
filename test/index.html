@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Document</title>
+        <style>
+            canvas {
+                background-image: linear-gradient(rgba(0, 0, 0, 0.1) 1px, transparent 0),
+                    linear-gradient(90deg, rgba(0, 0, 0, 0.1) 1px, transparent 0);
+                background-size: 10px 10px;
+            }
+        </style>
+    </head>
+    <body>
+        <div id="main"></div>
+    </body>
+
+    <script>
+        function measureText(str) {
+            let canvas = document.createElement('canvas')
+            let ctx = canvas.getContext('2d')
+            ctx.font = '100px Arial'
+            return ctx.measureText(str).width
+        }
+        function init() {
+            let str = '成都'
+            let height = 100
+            let canvas = document.createElement('canvas')
+            canvas.width = measureText(str)
+            canvas.height = height * 1.5
+            let ctx = canvas.getContext('2d')
+            ctx.font = '100px Arial'
+            ctx.fillText(str, 0, height)
+            document.getElementById('main').appendChild(canvas)
+        }
+        init()
+    </script>
+</html>
+   
